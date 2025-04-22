@@ -1,28 +1,32 @@
-# hadolint global ignore DL3008
 FROM debian:12-slim AS build 
 
-# hadolint ignore DL3008
 RUN apt-get update && \
-    apt-get install --no-install-suggests --no-install-recommends --yes python3-venv gcc libpython3-dev && \
+    apt-get install --no-install-suggests --no-install-recommends --yes python3-venv gcc libpython3-dev curl && \
     python3 -m venv /venv && \
-    /venv/bin/python -m ensurepip --upgrade && \
-    # clean apt cache to reduce image size
+    curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    /venv/bin/python get-pip.py && \
+    rm get-pip.py && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 FROM build AS build-venv
 
 COPY requirements.txt /requirements.txt
-RUN /venv/bin/pip install --disable-pip-version-check -r /requirements.txt
 
+# DEBUG: afficher requirements
+RUN cat /requirements.txt
+
+# DEBUG: version de pip
+RUN /venv/bin/pip --version
+
+# Installation des deps
+RUN /venv/bin/pip install --no-cache-dir --disable-pip-version-check -r /requirements.txt
 
 FROM gcr.io/distroless/python3-debian12:latest-amd64
 COPY --from=build-venv /venv /venv
 
 WORKDIR /app
-
 COPY . .
-
 
 EXPOSE 8080
 
