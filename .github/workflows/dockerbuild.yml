@@ -1,4 +1,4 @@
-name: Docker
+name: Dockerbuild
 
 on: [push, pull_request]
 
@@ -11,12 +11,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ vars.USERNAMEDOCKER }}" --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.USERNAMEDOCKER }}" --password-stdin
 
       - name: Build the Docker image
         run: |
-          docker build -t ${{ vars.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }} .
+          docker build -t ${{ secrets.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }} .
 
       - name: Push image to Docker Hub
         run: |
-          docker push ${{ vars.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }}
+          docker push ${{ secrets.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }}
