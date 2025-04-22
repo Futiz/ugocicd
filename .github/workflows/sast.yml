@@ -2,9 +2,9 @@
 name: Bandit
 on:
   push:
-    branches: [ "CICD" ]
+    branches: [ "tp1" ]
   pull_request:
-    branches: [ "CICD" ]
+    branches: [ "tp1" ]
   schedule:
     - cron: '37 11 * * 2'
 
@@ -14,6 +14,7 @@ jobs:
       contents: read 
       security-events: write 
       actions: read 
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,4 +23,5 @@ jobs:
         with: 
           exit_zero: true 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          
           
