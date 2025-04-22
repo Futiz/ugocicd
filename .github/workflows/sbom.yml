@@ -2,7 +2,7 @@ name: Generate SBOM
 
 on:
   push:
-    
+   
   pull_request:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Set up Python (si ton projet est en Python)
+      - name: Set up Python (si nécessaire)
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
@@ -22,12 +22,14 @@ jobs:
       - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0.15.1
         with:
-          input: dir:.
+          path: .                     # ← remplace 'input' par 'path'
           format: syft-json
           output-file: sbom.syft.json
+          artifact-name: sbom_syft   # ← pas de caractères spéciaux
 
-      - name: Upload SBOM artifact
+      - name: Upload SBOM artifact (optionnel si déjà fait par l'action)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sbom-syft-json
+          name: sbom_syft
           path: sbom.syft.json
