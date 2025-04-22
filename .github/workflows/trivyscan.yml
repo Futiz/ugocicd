@@ -1,4 +1,4 @@
-name: 🛡 Trivy Scan
+name: 🔍 Trivy Scan
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,13 +29,15 @@ jobs:
           push: true
           tags: ${{ secrets.USERNAMEDOCKER }}/ugocicd:dev-${{ github.sha }}
 
-  scan-image:
-    needs: build-and-push
+  scan:
     runs-on: ubuntu-latest
-    continue-on-error: true  
+    needs: build-and-push
+    continue-on-error: true
+
     steps:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ secrets.USERNAMEDOCKER }}/ugocicd:dev-${{ github.sha }}
+          format: table
           severity: HIGH,CRITICAL
