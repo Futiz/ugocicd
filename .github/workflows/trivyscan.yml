@@ -14,7 +14,9 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.49.1_Linux-64bit.deb
           sudo dpkg -i trivy_0.49.1_Linux-64bit.deb
 
-      - name: Scan image with Trivy
+      - name: Scan Docker image with Trivy
         continue-on-error: true
         run: |
-          trivy image --severity HIGH,CRITICAL --exit-code 0 docker.io/futiz/ugocicd:dev-${{ github.sha }}
+          IMAGE=futiz/ugocicd:dev-${{ github.sha }}
+          echo "Scanning image $IMAGE"
+          trivy image --exit-code 0 --severity HIGH,CRITICAL $IMAGE
