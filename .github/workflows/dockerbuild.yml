@@ -19,7 +19,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.futizz }}
+          username: ${{ secrets.USERNAMEDOCKER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker image
@@ -28,4 +28,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.futizz }}/ugocicd:dev-${{ github.sha }}
+          tags: ${{ secrets.USERNAMEDOCKER }}/ugocicd:dev-${{ github.sha }}
