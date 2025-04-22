@@ -23,4 +23,6 @@ jobs:
 
       - name: Run Pylint with custom rules
         run: |
+          echo "🔍 Files to be analyzed:"
+          git ls-files '*.py'
           pylint $(git ls-files '*.py') --disable=C,R0801 --fail-under=7
