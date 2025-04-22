@@ -23,6 +23,7 @@ jobs:
 
       - name: Run Pylint with custom rules
         run: |
-          echo "🔍 Files to be analyzed:"
+          echo "🔍 Python files to analyze:"
           git ls-files '*.py'
-          pylint $(git ls-files '*.py') --disable=C,R0801 --fail-under=7
+          echo "-----"
+          pylint $(git ls-files '*.py') --disable=C,R0801 --fail-under=7 --output-format=text
