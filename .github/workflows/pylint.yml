@@ -26,4 +26,5 @@ jobs:
           pip install django
           pip install pytest
           pip install dotenv
+
           pylint $(git ls-files '*.py') --disable=C,R0801 --fail-under=7

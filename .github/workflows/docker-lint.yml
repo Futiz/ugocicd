@@ -1,10 +1,6 @@
-name: 🧼 Dockerfile Lint
+name: Dockerfile Lint
 
-on:
-  push:
-    paths:
-      - 'Dockerfile'
-      - '.github/workflows/docker-lint.yml'
+on: [push]
 
 jobs:
   hadolint:
@@ -13,7 +9,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Lint Dockerfile
+      - name: Lint Dockerfile with Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
