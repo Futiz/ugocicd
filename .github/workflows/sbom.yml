@@ -22,10 +22,10 @@ jobs:
       - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0.15.1
         with:
-          path: .                     # ← remplace 'input' par 'path'
+          path: .                     
           format: syft-json
           output-file: sbom.syft.json
-          artifact-name: sbom_syft   # ← pas de caractères spéciaux
+          artifact-name: sbomsyftjson
 
       - name: Upload SBOM artifact (optionnel si déjà fait par l'action)
         if: always()
