@@ -1,33 +1,38 @@
 name: Cypress Tests
 
-on:
-  push:
-  pull_request:
-    branches:
-      - main
+on: push
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
-    container:
-      image: cypress/included:13.7.3
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Python dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Python
         run: |
-          apt-get update && apt-get install -y python3-pip
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
           pip3 install -r requirements.txt
 
-      - name: Start Python app
+      - name: Start Python server
         run: |
           python3 manage.py runserver 0.0.0.0:5000 &
       
       - name: Wait for server
         run: npx wait-on http://localhost:5000
+
+      - name: Install Cypress binary
+        run: npx cypress install
 
       - name: Run Cypress tests
         run: npx cypress run
