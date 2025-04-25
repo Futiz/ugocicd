@@ -1,0 +1,35 @@
+name: Generate SBOM
+
+on:
+  push:
+   
+  pull_request:
+
+jobs:
+  generate-sbom:
+    name: Generate SBOM with Syft
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up Python (si nécessaire)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0.15.1
+        with:
+          path: .                     
+          format: syft-json
+          output-file: sbom.syft.json
+          artifact-name: sbomsyftjson
+
+      - name: Upload SBOM artifact (optionnel si déjà fait par l'action)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom_syft
+          path: sbom.syft.json

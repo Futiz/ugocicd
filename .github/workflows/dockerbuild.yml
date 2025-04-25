@@ -1,0 +1,22 @@
+name: Dockerbuild
+
+on: [push, pull_request]
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.USERNAMEDOCKER }}" --password-stdin
+
+      - name: Build the Docker image
+        run: |
+          docker build -t ${{ secrets.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }} .
+
+      - name: Push image to Docker Hub
+        run: |
+          docker push ${{ secrets.USERNAMEDOCKER }}/mon-app:dev-${{ github.sha }}

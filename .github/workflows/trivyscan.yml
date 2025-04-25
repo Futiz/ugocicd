@@ -1,0 +1,27 @@
+name: Trivy Scan
+
+on:
+  push:
+    
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.USERNAMEDOCKER }} --password-stdin
+
+      - name: Build container image
+        run: |
+          docker build -t my-app:latest .
+
+      - name: Scan image with Trivy
+        continue-on-error: true  # Don't fail pipeline
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image --severity HIGH,CRITICAL my-app:latest
