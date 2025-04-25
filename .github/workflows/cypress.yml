@@ -26,7 +26,10 @@ jobs:
 
       - name: Start Python server
         run: |
-          python3.11 manage.py runserver 0.0.0.0:8080 &
+            python3.11 manage.py runserver 0.0.0.0:8080 > server.log 2>&1 &
+            sleep 5
+            cat server.log
+        
 
       - name: Wait for server
         run: npx wait-on http://localhost:8080
