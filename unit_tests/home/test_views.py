@@ -14,9 +14,9 @@ def test_RedirectHomeView():
     Testing if our RedirectHomeView redirects succuessfully (status_code 302)
     For the second assert, We are testing if we redirect to the '/home/' url
      """
-
     assert response.status_code == 302
     assert response.url == '/home/'
+
 
 @pytest.mark.django_db
 def test_HomeView():
@@ -27,6 +27,10 @@ def test_HomeView():
     In the first assert, We are testing if our get request returns 200 (OK) status code 
     For the second assert, we are making sure that our view returns the home.html template
     """
-    
+
     assert response.status_code == 200
     assertTemplateUsed(response, 'home.html')
+
+    # ✅ Ajout : vérifie la présence du bouton dark mode et du script
+    assert '🌗' in response.content.decode()
+    assert 'toggleDarkMode()' in response.content.decode()
