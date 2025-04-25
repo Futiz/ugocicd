@@ -21,15 +21,18 @@ jobs:
       - name: Install Python
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install -r requirements.txt
+          sudo apt-get install -y python3.11-venv python3-pip
+          python3.11 -m venv env_cicd
+          source env_cicd/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Start Python server
         run: |
-            python3.11 manage.py runserver 0.0.0.0:8080 > server.log 2>&1 &
-            sleep 5
-            cat server.log
-        
+          source env_cicd/bin/activate
+          python manage.py runserver 0.0.0.0:8080 > server.log 2>&1 &
+          sleep 5
+          cat server.log
 
       - name: Wait for server
         run: npx wait-on http://localhost:8080
