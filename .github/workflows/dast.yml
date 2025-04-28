@@ -10,13 +10,13 @@ jobs:
   dast:
     name: DAST scan with OWASP ZAP
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Build & start application
         run: |
-          # Build your container or start your app locally
           docker build -t app-under-test .
           docker run -d --name sut -p 8080:8080 app-under-test
 
@@ -25,7 +25,8 @@ jobs:
         with:
           target: 'http://host.docker.internal:8080'
           cmd_options: '-t 2 -r zap_report.html'
-      
+
+   
       - name: Upload DAST report
         uses: actions/upload-artifact@v3
         with:
