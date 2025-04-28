@@ -44,4 +44,6 @@ jobs:
           image: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app/myimage:dev
           region: europe-west1
           project_id: vertical-hook-448709-t6
-          port: 8080
+          flags: >
+            --allow-unauthenticated
+            --port=8080
