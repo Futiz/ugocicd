@@ -6,35 +6,28 @@ on:
 
 jobs:
   dast:
-    name: DAST scan with OWASP ZAP
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Build and start app
+      - name: Build & start app
         run: |
           docker build -t app-under-test .
           docker run -d --name sut -p 8080:8080 app-under-test
 
-      - name: Run OWASP ZAP baseline scan (1 min)
+      - name: Run OWASP ZAP baseline scan
         uses: zaproxy/action-baseline@v0.8.0
         with:
           target: 'http://host.docker.internal:8080'
-          cmd_options: >
-            -t 1                     # durée max 1 min
-            -r zap_report.json       # nom de sortie du rapport
-            -z "-config report_format=JSON"  # forcer le JSON
+          cmd_options: '-t 1 -r zap_report.json'
 
       - name: Upload DAST report
-        uses: actions/upload-artifact@v3
+        uses: 'actions/upload-artifact@v3'
         with:
           name: zap-report
           path: zap_report.json
 
-      - name: Tear down application
+      - name: Tear down
         if: always()
         run: |
-          docker stop sut
-          docker rm sut
+          docker stop sut && docker rm sut
