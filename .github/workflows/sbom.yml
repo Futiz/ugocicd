@@ -1,35 +1,51 @@
-name: Generate SBOM
-
+name: Generate and Scan SBOM
+ 
 on:
   push:
-   
-  pull_request:
-
+    branches:
+      - main
+ 
 jobs:
   generate-sbom:
-    name: Generate SBOM with Syft
+    name: Generate SBOM
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
-      - name: Set up Python (si nécessaire)
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
       - name: Generate SBOM with Syft
-        uses: anchore/sbom-action@v0.15.1
+        uses: anchore/sbom-action@v0
+        id: generate-sbom
         with:
-          path: .                     
+          path: .
+          output-file: sbom.json
           format: syft-json
-          output-file: sbom.syft.json
-          artifact-name: sbomsyftjson
-
-      - name: Upload SBOM artifact (optionnel si déjà fait par l'action)
-        if: always()
+ 
+      - name: Upload SBOM as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sbom_syft
-          path: sbom.syft.json
+          name: sbom
+          path: sbom.json
+ 
+  scan-sbom:
+    name: Scan SBOM with Grype
+    needs: generate-sbom
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom
+ 
+      - name: Scan SBOM with Grype
+        uses: anchore/scan-action@v6
+        with:
+          sbom: sbom.json
+          severity-cutoff: critical  # Modifier ici pour accepter les vulnérabilités de niveau high et plus
+          output-format: table
+          output-file: grype-report
+      - name: Upload SBOM as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: report
+          path: grype-report
