@@ -22,7 +22,7 @@ jobs:
           cmd_options: '-t 1 -r zap_report.json'
 
       - name: Upload DAST report
-        uses: 'actions/upload-artifact@v3'
+        uses: 'actions/upload-artifact@v2'
         with:
           name: zap-report
           path: zap_report.json
