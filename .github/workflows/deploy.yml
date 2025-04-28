@@ -40,7 +40,7 @@ jobs:
       - name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: isen-python-auto
+          service: isen-python-app
           image: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app/myimage:dev
           region: europe-west1
           project_id: vertical-hook-448709-t6
