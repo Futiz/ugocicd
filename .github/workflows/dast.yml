@@ -8,7 +8,6 @@ on:
 
 jobs:
   dast:
-    name: DAST scan with OWASP ZAP
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +25,8 @@ jobs:
           target: 'http://host.docker.internal:8080'
           cmd_options: '-t 2 -r zap_report.html'
 
-   
+      # ← notice this `-` is at the same indent as the others,
+      #     not nested under the previous `with:`
       - name: Upload DAST report
         uses: actions/upload-artifact@v3
         with:
