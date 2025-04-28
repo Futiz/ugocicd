@@ -29,18 +29,18 @@ jobs:
             context: .
             push: false
             load: true
-            tags: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+            tags: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app/myimage:dev
             cache-from: type=registry,ref=europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
             cache-to: type=inline
  
       - name: Push Docker image to Artifact Registry
         run: |
-            docker push europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+            docker push europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app/myimage:dev
  
       - name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: isen-python-auto
-          image: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+          image: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app/myimage:dev
           region: europe-west1
           project_id: vertical-hook-448709-t6
