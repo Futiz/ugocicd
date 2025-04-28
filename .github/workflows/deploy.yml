@@ -1,46 +1,48 @@
-name: Deploy Django App to Google Cloud Run
-
+name: Google Cloud Deploy
+ 
 on:
   push:
     branches:
       - main
-
+ 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+ 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: '${{ secrets.GOOGLEKEY }}'
-
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
-
-    - name: Authenticate Docker to Artifact Registry
-      run: |
-        gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
-
-    - name: Build Docker image
-      run: |
-        docker build -t django-app .
-
-    - name: Tag Docker image for Artifact Registry
-      run: |
-        docker tag django-app europe-west1-docker.pkg.dev/vertical-hook-448709-t6/my-repo/django-app
-
-    - name: Push Docker image to Artifact Registry
-      run: |
-        docker push europe-west1-docker.pkg.dev/vertical-hook-448709-t6/my-repo/django-app
-
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy django-app \
-          --image europe-west1-docker.pkg.dev/vertical-hook-448709-t6/my-repo/django-app \
-          --platform managed \
-          --region europe-west1 \
-          --allow-unauthenticated
+      - name: Checkout code
+        uses: actions/checkout@v2
+ 
+      - name: Set up Google Cloud authentication
+        uses: 'google-github-actions/auth@v2'
+        with:
+           credentials_json: '${{ secrets.GOOGLEKEY }}'
+ 
+      - name: Configure Docker to authenticate to Artifact Registry
+        run: |
+            gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+ 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+ 
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+            context: .
+            push: false
+            load: true
+            tags: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+            cache-from: type=registry,ref=europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+            cache-to: type=inline
+ 
+      - name: Push Docker image to Artifact Registry
+        run: |
+            docker push europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+ 
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: isen-python-auto
+          image: europe-west1-docker.pkg.dev/vertical-hook-448709-t6/isen-python-app
+          region: europe-west1
+          project_id: cybernetic-muse-458208-f7
